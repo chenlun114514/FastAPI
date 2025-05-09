@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图片上传</title>
+</head>
+<body>
+    <form action="/upload/" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*">
+        <button type="submit">上传</button>
+    </form>
+    <div id="result" style="margin-top: 20px;"></div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/upload/', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if(data.url) {
+                    document.getElementById('result').innerHTML = `
+                        <p>上传成功！访问链接：</p>
+                        <a href="${data.url}" target="_blank">${data.url}</a>
+                    `;
+                } else {
+                    document.getElementById('result').innerHTML = `错误：${data.error}`;
+                }
+            } catch (err) {
+                document.getElementById('result').innerHTML = "上传失败，请检查控制台";
+            }
+        });
+    </script>
+</body>
+</html>
